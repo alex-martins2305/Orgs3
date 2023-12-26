@@ -1,14 +1,12 @@
 package br.com.alura.orgs.ui.activity
 
 import android.os.Bundle
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import br.com.alura.orgs.R
 import br.com.alura.orgs.dao.ProdutosDao
 import br.com.alura.orgs.databinding.ActivityFormularioProdutoBinding
-import br.com.alura.orgs.databinding.FormularioImagemBinding
+import br.com.alura.orgs.extensions.tentaCarregarImagem
 import br.com.alura.orgs.model.Produto
-import coil.load
+import br.com.alura.orgs.ui.formularioImage.FormularioImagemDialog
 import java.math.BigDecimal
 
 class FormularioProdutoActivity : AppCompatActivity() {
@@ -20,31 +18,16 @@ class FormularioProdutoActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        title="Cadastrar produto"
         setContentView(binding.root)
         configuraBotaoSalvar()
         binding.activityFormularioProdutoImage.setOnClickListener{
-            val bindingFormularioImagem=FormularioImagemBinding.inflate(layoutInflater)
-            bindingFormularioImagem.formularioImagemButton.setOnClickListener{
-                val url = bindingFormularioImagem.activityFormularioImageUrl.text.toString()
-                bindingFormularioImagem.activityFormularioImageImage.load(url){
-                    placeholder(R.drawable.loading)
+            FormularioImagemDialog(this)
+                .mostra (url){ imagem->
+                    url=imagem
+                    binding.activityFormularioProdutoImage.tentaCarregarImagem(url)
                 }
-            }
-
-            AlertDialog.Builder(this)
-                .setView(bindingFormularioImagem.root)
-                .setPositiveButton("Confirmar") {_,_->
-                    url = bindingFormularioImagem.activityFormularioImageUrl.text.toString()
-                    binding.activityFormularioProdutoImage.load(url){
-                        placeholder(R.drawable.loading)
-                    }
-                }
-                .setNegativeButton("Cancelar"){_,_->
-
-                }
-                .show()
         }
-
     }
 
     private fun configuraBotaoSalvar() {
